@@ -11,6 +11,7 @@ int main(int argc, char** argv)
 	// all plugins are loaded in MainApp
 	MainApp mainWidget;
 
+	// we launch the app
 	mainWidget.show();
 	return app.exec();
 }

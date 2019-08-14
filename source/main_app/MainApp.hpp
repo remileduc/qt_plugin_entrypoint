@@ -4,9 +4,8 @@
 #include <memory>
 #include <vector>
 
+#include <QPluginLoader>
 #include <QWidget>
-
-class QPluginLoader;
 
 namespace Ui
 {
