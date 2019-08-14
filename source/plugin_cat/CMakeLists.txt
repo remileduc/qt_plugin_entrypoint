@@ -5,6 +5,9 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 set(PLUGINCAT_SOURCES
 	PluginCat.hpp
 	PluginCat.cpp
+	DogEnnemy.hpp
+	DogEnnemy.cpp
+	DogInterface.hpp
 )
 
 add_library(PluginCat SHARED

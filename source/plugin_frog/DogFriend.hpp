@@ -3,9 +3,9 @@
 
 #include <QMetaType>
 
-#include "DogFriendInterface.hpp"
+#include "DogInterface.hpp"
 
-class DogFriend : public DogFriendInterface
+class DogFriend : public DogInterface
 {
 public:
 	virtual ~DogFriend() override = default;

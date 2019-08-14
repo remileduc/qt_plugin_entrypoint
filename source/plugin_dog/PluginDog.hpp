@@ -3,6 +3,8 @@
 
 #include <PluginInterface.hpp>
 
+class QPluginLoader;
+
 /**
  * Plugin representing a dog.
  *
@@ -23,6 +25,10 @@ public:
 
 	virtual const QString& name() const noexcept override;
 	virtual QString contents() override;
+
+private:
+	QString checkFriends(QPluginLoader& plugin);
+	QString checkEnnemies(QPluginLoader& plugin);
 };
 
 #endif // PLUGINDOG_HPP

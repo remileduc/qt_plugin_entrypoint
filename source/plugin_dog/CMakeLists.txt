@@ -5,7 +5,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 set(PLUGINDOG_SOURCES
 	PluginDog.hpp
 	PluginDog.cpp
-	DogFriendInterface.hpp
+	DogInterface.hpp
 )
 
 add_library(PluginDog SHARED

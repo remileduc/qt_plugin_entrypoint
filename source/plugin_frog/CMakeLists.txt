@@ -7,7 +7,7 @@ set(PLUGINFROG_SOURCES
 	PluginFrog.cpp
 	DogFriend.hpp
 	DogFriend.cpp
-	DogFriendInterface.hpp
+	DogInterface.hpp
 )
 
 add_library(PluginFrog SHARED

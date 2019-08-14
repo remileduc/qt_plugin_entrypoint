@@ -1,6 +1,5 @@
 #include "PluginFrog.hpp"
 
-#include <QDebug>
 #include <QVariant>
 #include "DogFriend.hpp"
 
