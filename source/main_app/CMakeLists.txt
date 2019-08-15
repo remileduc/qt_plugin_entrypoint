@@ -9,7 +9,7 @@ set(MAINAPP_SOURCES
 	main.cpp
 )
 
-add_executable(MainApp
+add_executable(MainApp WIN32
 	${MAINAPP_SOURCES}
 )
 target_include_directories(MainApp PRIVATE

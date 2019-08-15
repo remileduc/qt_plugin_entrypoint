@@ -16,11 +16,11 @@ QString DogFriend::cry()
 
 		QJsonValue json = utils::getPluginMetadata(*plugin)["PluginCat_info"];
 		if (!json.isString())
-			return "";
+			continue;
 
 		int id = QMetaType::type(json.toString().toStdString().c_str());
 		if (id == QMetaType::UnknownType)
-			return "";
+			continue;
 
 		auto* infoclass = static_cast<CatInterface*>(QMetaType::create(id));
 		infoclass->giveInfo(utils::getPluginInterface(*plugin), "I think I saw a dog in the area...");

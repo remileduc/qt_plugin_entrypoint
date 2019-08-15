@@ -42,6 +42,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 		# release
 		"$<$<CONFIG:release>:/LTCG>"
 	)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 endif()
 
 #########################

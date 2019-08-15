@@ -42,7 +42,8 @@ QString utils::getPluginName(QPluginLoader& loader)
 
 QJsonObject utils::getPluginMetadata(const QPluginLoader& loader)
 {
-	const auto& md = loader.metaData()["MetaData"];
+	const auto json = loader.metaData();
+	const auto md = json["MetaData"];
 
 	return md.isObject() ? md.toObject() : QJsonObject();
 }
