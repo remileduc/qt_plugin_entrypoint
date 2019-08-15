@@ -8,6 +8,7 @@ set(PLUGINFROG_SOURCES
 	DogFriend.hpp
 	DogFriend.cpp
 	DogInterface.hpp
+	CatInterface.hpp
 )
 
 add_library(PluginFrog SHARED

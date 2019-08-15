@@ -1,3 +1,6 @@
 {
-	"PluginDog_friend": "DogFriend"
+	"PluginDog_friend": "DogFriend",
+	"search_for": {
+		"PluginCat_info": "Tell the cat that there may be a dog somewhere"
+	}
 }

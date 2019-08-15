@@ -8,6 +8,9 @@ set(PLUGINCAT_SOURCES
 	DogEnnemy.hpp
 	DogEnnemy.cpp
 	DogInterface.hpp
+	CatInterface.hpp
+	CatInfo.hpp
+	CatInfo.cpp
 )
 
 add_library(PluginCat SHARED

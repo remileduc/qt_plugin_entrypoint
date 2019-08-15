@@ -1,11 +1,14 @@
 #include "PluginCat.hpp"
 
 #include <QVariant>
+
+#include "CatInfo.hpp"
 #include "DogEnnemy.hpp"
 
 PluginCat::PluginCat(QObject* parent) : QObject(parent)
 {
 	// we NEED to initialize a QVariant to make QMetaType work correctly...
+	QVariant::fromValue(CatInfo());
 	QVariant::fromValue(DogEnnemy());
 }
 
@@ -17,5 +20,10 @@ const QString& PluginCat::name() const noexcept
 
 QString PluginCat::contents()
 {
-	return "I am a cat!";
+	return "I am a cat!\n\n" + _info;
+}
+
+void PluginCat::setInfo(QString info) noexcept
+{
+	_info = info;
 }

@@ -24,6 +24,12 @@ public:
 
 	virtual const QString& name() const noexcept override;
 	virtual QString contents() override;
+
+	// not exposed
+	void setInfo(QString info) noexcept;
+
+private:
+	QString _info;
 };
 
 #endif // PLUGINCAT_HPP
