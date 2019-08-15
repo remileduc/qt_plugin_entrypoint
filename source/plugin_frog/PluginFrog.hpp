@@ -22,6 +22,9 @@ public:
 
 	virtual const QString& name() const noexcept override;
 	virtual QString contents() override;
+
+	// not exposed
+	inline static const QString _name = "PluginFrog";
 };
 
 #endif // PLUGINFROG_HPP

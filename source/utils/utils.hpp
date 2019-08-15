@@ -13,6 +13,10 @@ namespace utils
 {
 	/**
 	 * Load all the plugins.
+	 *
+	 * Note that a QPLuginLoader is not copyable and not moveable,
+	 * this is why we need to return pointers.
+	 *
 	 * @return the list of the loaded plugins.
 	 */
 	std::vector<std::unique_ptr<QPluginLoader>> loadPlugins();

@@ -27,8 +27,8 @@ public:
 	virtual QString contents() override;
 
 private:
-	QString checkFriends(QPluginLoader& plugin);
-	QString checkEnnemies(QPluginLoader& plugin);
+	QString checkFriends(QPluginLoader& plugin) const;
+	QString checkEnnemies(QPluginLoader& plugin) const;
 };
 
 #endif // PLUGINDOG_HPP

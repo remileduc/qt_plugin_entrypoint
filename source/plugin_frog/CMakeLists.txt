@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
 set(PLUGINFROG_SOURCES
-	PluginFrog.hpp
-	PluginFrog.cpp
-	DogFriend.hpp
-	DogFriend.cpp
-	DogInterface.hpp
 	CatInterface.hpp
+	DogFriend.cpp
+	DogFriend.hpp
+	DogInterface.hpp
+	PluginFrog.cpp
+	PluginFrog.hpp
 )
 
 add_library(PluginFrog SHARED
@@ -20,8 +20,6 @@ target_include_directories(PluginFrog PRIVATE
 target_link_libraries(PluginFrog
 	# Qt
 	Qt5::Core
-	Qt5::Gui
-	Qt5::Widgets
 	# utils
 	utils
 )

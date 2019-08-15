@@ -9,9 +9,7 @@
 
 std::vector<std::unique_ptr<QPluginLoader>> utils::loadPlugins()
 {
-	using pluginvect = std::vector<std::unique_ptr<QPluginLoader>>;
-
-	pluginvect plugins;
+	std::vector<std::unique_ptr<QPluginLoader>> plugins;
 	QDir pluginsDir(QCoreApplication::instance()->applicationDirPath());
 	const auto entryList = pluginsDir.entryList(QDir::Files);
 

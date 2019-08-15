@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 set(MAINAPP_SOURCES
-	main.cpp
-	MainApp.hpp
 	MainApp.cpp
+	MainApp.hpp
 	MainApp.ui
+	main.cpp
 )
 
 add_executable(MainApp

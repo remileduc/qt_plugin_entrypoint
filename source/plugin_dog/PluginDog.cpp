@@ -22,6 +22,8 @@ QString PluginDog::contents()
 	const auto plugins = utils::loadPlugins();
 	for (const auto& plugin : plugins)
 	{
+		if (plugin->instance() == this)
+			continue;
 		content += checkFriends(*plugin);
 		content += checkEnnemies(*plugin);
 	}
@@ -29,14 +31,13 @@ QString PluginDog::contents()
 	return content;
 }
 
-QString PluginDog::checkFriends(QPluginLoader& plugin)
+QString PluginDog::checkFriends(QPluginLoader& plugin) const
 {
 	QJsonValue json = utils::getPluginMetadata(plugin)["PluginDog_friend"];
 	if (!json.isString())
 		return "";
 
-	QString classname = json.toString();
-	int id = QMetaType::type(classname.toStdString().c_str());
+	int id = QMetaType::type(json.toString().toStdString().c_str());
 	if (id == QMetaType::UnknownType)
 		return "";
 
@@ -47,14 +48,13 @@ QString PluginDog::checkFriends(QPluginLoader& plugin)
 	return str;
 }
 
-QString PluginDog::checkEnnemies(QPluginLoader& plugin)
+QString PluginDog::checkEnnemies(QPluginLoader& plugin) const
 {
 	QJsonValue json = utils::getPluginMetadata(plugin)["PluginDog_ennemies"];
 	if (!json.isString())
 		return "";
 
-	QString classname = json.toString();
-	int id = QMetaType::type(classname.toStdString().c_str());
+	int id = QMetaType::type(json.toString().toStdString().c_str());
 	if (id == QMetaType::UnknownType)
 		return "";
 

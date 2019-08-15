@@ -1,10 +1,10 @@
 #include "MainApp.hpp"
 #include "ui_MainApp.h"
 
+#include <QJsonDocument>
+
 #include <PluginInterface.hpp>
 #include <utils.hpp>
-
-#include <QJsonDocument>
 
 MainApp::MainApp(QWidget* parent) :
 	QWidget(parent),

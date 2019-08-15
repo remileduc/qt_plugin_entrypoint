@@ -12,8 +12,7 @@ PluginFrog::PluginFrog(QObject* parent) : QObject(parent)
 
 const QString& PluginFrog::name() const noexcept
 {
-	static QString _name = "PluginFrog";
-	return _name;
+	return PluginFrog::_name;
 }
 
 QString PluginFrog::contents()
