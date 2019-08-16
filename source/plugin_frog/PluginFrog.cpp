@@ -1,13 +1,11 @@
 #include "PluginFrog.hpp"
 
-#include <QVariant>
-
 #include "DogFriend.hpp"
 
 PluginFrog::PluginFrog(QObject* parent) : QObject(parent)
 {
-	// we NEED to initialize a QVariant to make QMetaType work correctly...
-	QVariant::fromValue(DogFriend());
+	// we NEED to register to make QMetaType work correctly...
+	qRegisterMetaType<DogFriend>();
 }
 
 const QString& PluginFrog::name() const noexcept

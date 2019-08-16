@@ -135,7 +135,6 @@ The first point can be fixed thanks to Qt and its [QMetaType](https://doc.qt.io/
 ```cpp
 #include <QMetaType>
 #include <QDebug>
-#include <QVariant>
 
 class MyClass
 {
@@ -150,11 +149,9 @@ Q_DECLARE_METATYPE(MyClass);
 
 int main(int argc, char *argv[])
 {
-    {
-        // WARNING!!! YOU **NEED** THIS LINE
-        // Otherwise, the class won't be registered in the Qt system...
-        QVariant v = QVariant::fromValue(MyClass());
-    }
+    // WARNING!!! YOU **NEED** THIS LINE
+    // Otherwise, the class won't be registered in the Qt system...
+    qRegisterMetaType<MyClass>();
 
     int id = QMetaType::type("MyClass");
     if (id == QMetaType::UnknownType)
@@ -209,7 +206,7 @@ Now, what we want is to have some communication between the plugins:
 
 `plugin_dog` can have ennemies and friends. Both need to implement the same interface: [DogInterface](./source/plugin_dog/DogInterface.hpp). However, if you want to be friend, you need to use the entrypoint `PluginDog_friend`, and use `PluginDog_ennemies` to be an ennemy.
 
-Let's take a frog for instance. It want to be a friend of dogs, thus, it first copies the [DogInterface (from plugin_frog)](./source/plugin_frog/DogInterface.hpp), and implements it in [DogFriend](./source/plugin_frog/DogFriend.hpp). Here, the class is exposed to Qt thanks to the line `Q_DECLARE_METATYPE(DogFriend)`. Note that it also needs to add this dummy line in [PluginFrog.cpp](./source/plugin_frog/PluginFrog.cpp#L9-L10): `QVariant::fromValue(DogFriend());`.
+Let's take a frog for instance. It want to be a friend of dogs, thus, it first copies the [DogInterface (from plugin_frog)](./source/plugin_frog/DogInterface.hpp), and implements it in [DogFriend](./source/plugin_frog/DogFriend.hpp). Here, the class is exposed to Qt thanks to the line `Q_DECLARE_METATYPE(DogFriend)`. Note that it also needs to add this dummy line in [PluginFrog.cpp](./source/plugin_frog/PluginFrog.cpp#L8): `qRegisterMetaType<DogFriend>();;`.
 
 Now, in its [JSON metadata](./source/plugin_frog/PluginFrog.json), it can use the entry point `PluginDog_friend` to expose the class:
 
