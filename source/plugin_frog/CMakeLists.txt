@@ -3,16 +3,17 @@ cmake_minimum_required(VERSION 3.10)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
 set(PLUGINFROG_SOURCES
-	CatInterface.hpp
 	DogFriend.cpp
 	DogFriend.hpp
-	DogInterface.hpp
 	PluginFrog.cpp
 	PluginFrog.hpp
 )
 
 add_library(PluginFrog SHARED
 	${PLUGINFROG_SOURCES}
+)
+target_compile_definitions(PluginFrog PRIVATE
+	utils_IMPORT
 )
 target_include_directories(PluginFrog PRIVATE
 	../utils

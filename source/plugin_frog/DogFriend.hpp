@@ -1,18 +1,29 @@
 #ifndef DOGFRIEND_HPP
 #define DOGFRIEND_HPP
 
-#include <QMetaType>
+#include <QObject>
 
-#include "DogInterface.hpp"
-
-class DogFriend : public DogInterface
+/**
+ * Entry point for "PluginDog_friends" key.
+ *
+ * This class tells the dog that frogs are friends.
+ *
+ * It is expected that dogs will call the method cry(). This is why, in this method,
+ * the frog will try to warn the cat that there is a dog.
+ */
+class DogFriend : public QObject
 {
+	Q_OBJECT
+
 public:
-	virtual ~DogFriend() override = default;
+	Q_INVOKABLE DogFriend(QObject *parent = nullptr) : QObject(parent) {}
 
-	virtual QString cry() override;
+	/**
+	 * @return the cry of the frog: "croak".
+	 *
+	 * It will also try to warn the cat that there is a dog.
+	 */
+	Q_INVOKABLE QString cry();
 };
-
-Q_DECLARE_METATYPE(DogFriend)
 
 #endif // DOGFRIEND_HPP

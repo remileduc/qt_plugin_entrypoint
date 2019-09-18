@@ -12,6 +12,9 @@ set(MAINAPP_SOURCES
 add_executable(MainApp WIN32
 	${MAINAPP_SOURCES}
 )
+target_compile_definitions(MainApp PRIVATE
+	utils_IMPORT
+)
 target_include_directories(MainApp PRIVATE
 	../utils
 )
@@ -26,6 +29,7 @@ target_link_libraries(MainApp
 
 #########################
 # Copy Plugins
+list(APPEND PLUGIN_LIST "utils")
 foreach(plugin IN LISTS PLUGIN_LIST)
 	add_custom_command(TARGET MainApp POST_BUILD
 		COMMAND "${CMAKE_COMMAND}" -E copy

@@ -1,30 +1,18 @@
 #include "DogFriend.hpp"
 
-#include <utils.hpp>
-
-#include "CatInterface.hpp"
-#include "PluginFrog.hpp"
+#include <PluginManager.hpp>
 
 QString DogFriend::cry()
 {
 	// send info to the cat
-	const auto plugins = utils::loadPlugins();
-	for (const auto& plugin : plugins)
+	const auto &cats = PluginManager::get().getEntryPoints("PluginCat_info");
+	for (const auto &cat : cats)
 	{
-		if (utils::getPluginName(*plugin) == PluginFrog::_name)
+		std::unique_ptr<QObject> qobj(cat.meta->newInstance());
+		if (!qobj)
 			continue;
 
-		QJsonValue json = utils::getPluginMetadata(*plugin)["PluginCat_info"];
-		if (!json.isString())
-			continue;
-
-		int id = QMetaType::type(json.toString().toStdString().c_str());
-		if (id == QMetaType::UnknownType)
-			continue;
-
-		auto* infoclass = static_cast<CatInterface*>(QMetaType::create(id));
-		infoclass->giveInfo(utils::getPluginInterface(*plugin), "I think I saw a dog in the area...");
-		QMetaType::destroy(id, infoclass);
+		QMetaObject::invokeMethod(qobj.get(), "giveInfo", Qt::DirectConnection, Q_ARG(QString, "I think I saw a dog in the area..."));
 	}
 
 	return "croak";

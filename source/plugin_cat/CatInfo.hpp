@@ -1,18 +1,26 @@
 #ifndef CATINFO_HPP
 #define CATINFO_HPP
 
-#include <QMetaType>
+#include <QObject>
 
-#include "CatInterface.hpp"
-
-class CatInfo : public CatInterface
+/**
+ * Entry point for "PluginCat_info" key.
+ *
+ * This class can be used to provide information to the cat.
+ */
+class CatInfo : public QObject
 {
+	Q_OBJECT
+
 public:
-	virtual ~CatInfo() override = default;
+	Q_INVOKABLE CatInfo(QObject *parent = nullptr) : QObject(parent) {}
 
-	virtual void giveInfo(PluginInterface* plugin, const QString& info) override;
+	/**
+	 * Store information in PluginCat.
+	 *
+	 * @param info the information to store.
+	 */
+	Q_INVOKABLE void giveInfo(const QString &info);
 };
-
-Q_DECLARE_METATYPE(CatInfo)
 
 #endif // CATINFO_HPP

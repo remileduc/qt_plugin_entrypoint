@@ -5,16 +5,17 @@ find_package(Qt5 COMPONENTS Core REQUIRED)
 set(PLUGINCAT_SOURCES
 	CatInfo.cpp
 	CatInfo.hpp
-	CatInterface.hpp
-	DogEnnemy.cpp
-	DogEnnemy.hpp
-	DogInterface.hpp
+	DogEnemy.cpp
+	DogEnemy.hpp
 	PluginCat.cpp
 	PluginCat.hpp
 )
 
 add_library(PluginCat SHARED
 	${PLUGINCAT_SOURCES}
+)
+target_compile_definitions(PluginCat PRIVATE
+	utils_IMPORT
 )
 target_include_directories(PluginCat PRIVATE
 	../utils

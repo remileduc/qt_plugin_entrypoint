@@ -1,12 +1,17 @@
 #include <QApplication>
 
+#include <PluginManager.hpp>
+
 #include "MainApp.hpp"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
-	// all plugins are loaded in MainApp
+	// we load the plugins
+	PluginManager::get().loadPlugins();
+
+	// we create the main window
 	MainApp mainWidget;
 
 	// we launch the app

@@ -198,13 +198,13 @@ When you launch the application, the followin happens:
 - now you can see what the plugins have to say by selecting a plugin from the combobox.
 
 Now, what we want is to have some communication between the plugins:
-- `plugin_cat` is an ennemy of `plugin_dog`
+- `plugin_cat` is an enemy of `plugin_dog`
 - `plugin_frog` is a friend of `plugin_dog`
 - `plugin_frog` tries to help `plugin_cat` and tells him when the dog is in the area
 
 ### How it works ###
 
-`plugin_dog` can have ennemies and friends. Both need to implement the same interface: [DogInterface](./source/plugin_dog/DogInterface.hpp). However, if you want to be friend, you need to use the entrypoint `PluginDog_friend`, and use `PluginDog_ennemies` to be an ennemy.
+`plugin_dog` can have enemies and friends. Both need to implement the same interface: [DogInterface](./source/plugin_dog/DogInterface.hpp). However, if you want to be friend, you need to use the entrypoint `PluginDog_friend`, and use `PluginDog_enemies` to be an enemy.
 
 Let's take a frog for instance. It want to be a friend of dogs, thus, it first copies the [DogInterface (from plugin_frog)](./source/plugin_frog/DogInterface.hpp), and implements it in [DogFriend](./source/plugin_frog/DogFriend.hpp). Here, the class is exposed to Qt thanks to the line `Q_DECLARE_METATYPE(DogFriend)`. Note that it also needs to add this dummy line in [PluginFrog.cpp](./source/plugin_frog/PluginFrog.cpp#L8): `qRegisterMetaType<DogFriend>();;`.
 

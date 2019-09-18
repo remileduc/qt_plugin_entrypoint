@@ -38,7 +38,7 @@
      </widget>
      <widget class="QWidget" name="metadata">
       <attribute name="title">
-       <string>Metadata</string>
+       <string>EntryPoints</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>

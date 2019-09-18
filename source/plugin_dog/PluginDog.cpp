@@ -1,14 +1,16 @@
 #include "PluginDog.hpp"
 
-#include <utils.hpp>
+#include <memory>
 
-#include "DogInterface.hpp"
+#include <QMetaMethod>
 
-PluginDog::PluginDog(QObject* parent) : QObject(parent)
+#include <PluginManager.hpp>
+
+PluginDog::PluginDog(QObject *parent) : QObject(parent)
 {
 }
 
-const QString& PluginDog::name() const noexcept
+const QString &PluginDog::name() const noexcept
 {
 	static QString _name = "PluginDog";
 	return _name;
@@ -19,48 +21,48 @@ QString PluginDog::contents()
 	QString content = "I am a dog!\n\n";
 
 	// check if there are some friends
-	const auto plugins = utils::loadPlugins();
-	for (const auto& plugin : plugins)
-	{
-		if (plugin->instance() == this)
-			continue;
-		content += checkFriends(*plugin);
-		content += checkEnnemies(*plugin);
-	}
+	content += checkFriends();
+	content += checkEnemies();
 
 	return content;
 }
 
-QString PluginDog::checkFriends(QPluginLoader& plugin) const
+QString PluginDog::checkFriends() const
 {
-	QJsonValue json = utils::getPluginMetadata(plugin)["PluginDog_friend"];
-	if (!json.isString())
-		return "";
+	const auto &friends = PluginManager::get().getEntryPoints("PluginDog_friends");
 
-	int id = QMetaType::type(json.toString().toStdString().c_str());
-	if (id == QMetaType::UnknownType)
-		return "";
+	QString str;
+	for (const auto &friendep : friends)
+	{
+		std::unique_ptr<QObject> qobj(friendep.meta->newInstance());
+		if (!qobj)
+			continue;
 
-	auto* friendclass = static_cast<DogInterface*>(QMetaType::create(id));
-	QString str = QString("I am a friend with '%1': '%2'\n").arg(utils::getPluginName(plugin), friendclass->cry());
-	QMetaType::destroy(id, friendclass);
+		QString cry;
+		bool callok = QMetaObject::invokeMethod(qobj.get(), "cry", Qt::DirectConnection, Q_RETURN_ARG(QString, cry));
+		if (callok)
+			str += QString("I am a friend with '%1': '%2'\n").arg(friendep.plugin->name(), cry);
+	}
 
 	return str;
 }
 
-QString PluginDog::checkEnnemies(QPluginLoader& plugin) const
+QString PluginDog::checkEnemies() const
 {
-	QJsonValue json = utils::getPluginMetadata(plugin)["PluginDog_ennemies"];
-	if (!json.isString())
-		return "";
+	const auto &friends = PluginManager::get().getEntryPoints("PluginDog_enemies");
 
-	int id = QMetaType::type(json.toString().toStdString().c_str());
-	if (id == QMetaType::UnknownType)
-		return "";
+	QString str;
+	for (const auto &friendep : friends)
+	{
+		std::unique_ptr<QObject> qobj(friendep.meta->newInstance());
+		if (!qobj)
+			continue;
 
-	auto* friendclass = static_cast<DogInterface*>(QMetaType::create(id));
-	QString str = QString("I EAT '%1': '%2'\n").arg(utils::getPluginName(plugin), friendclass->cry());
-	QMetaType::destroy(id, friendclass);
+		QString cry;
+		bool callok = QMetaObject::invokeMethod(qobj.get(), "cry", Qt::DirectConnection, Q_RETURN_ARG(QString, cry));
+		if (callok)
+			str += QString("I EAT '%1': '%2'\n").arg(friendep.plugin->name(), cry);
+	}
 
 	return str;
 }

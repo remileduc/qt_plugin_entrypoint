@@ -1,16 +1,19 @@
 #include "PluginCat.hpp"
 
-#include "CatInfo.hpp"
-#include "DogEnnemy.hpp"
+#include <PluginManager.hpp>
 
-PluginCat::PluginCat(QObject* parent) : QObject(parent)
+#include "CatInfo.hpp"
+#include "DogEnemy.hpp"
+
+PluginCat::PluginCat(QObject *parent) : QObject(parent)
 {
-	// we NEED to register to make QMetaType work correctly...
-	qRegisterMetaType<CatInfo>();
-	qRegisterMetaType<DogEnnemy>();
+	// we NEED to register to make the QMetaObject available...
+	auto &pmanager = PluginManager::get();
+	pmanager.registerEntryPoint("PluginDog_enemies", {&DogEnemy::staticMetaObject, this});
+	pmanager.registerEntryPoint("PluginCat_info", {&CatInfo::staticMetaObject, this});
 }
 
-const QString& PluginCat::name() const noexcept
+const QString &PluginCat::name() const noexcept
 {
 	static QString _name = "PluginCat";
 	return _name;
