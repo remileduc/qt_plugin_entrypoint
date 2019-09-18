@@ -130,45 +130,55 @@ In reallity, he needs to instantiate the class exposed by the the first one in i
 	- in Python, you use duck typing (don't have to inherit an interface to implement it)
 	- in C++, NO! (you must inherit a class to implement its interface)
 
-The first point can be fixed thanks to Qt and its [QMetaType](https://doc.qt.io/qt-5/qmetatype.html). Dummy example:
+Hopefully, both points can be fixed by [QMetaObject](https://doc.qt.io/qt-5/qmetaobject.html) (another solution is to use [QMetaType](https://doc.qt.io/qt-5/qmetatype.html), see the branch [qmetatype](https://github.com/remileduc/qt_plugin_entrypoint/tree/qmetatype) for that). Dummy example:
 
 ```cpp
-#include <QMetaType>
 #include <QDebug>
+#include <QObject>
 
-class MyClass
+class MyClass : public QObject
 {
+    Q_OBJECT
+
 public:
-    virtual ~MyClass()  = default;
-    int getValue() const noexcept { return value; }
-    void setValue(int i) noexcept { value = i; }
+    Q_INVOKABLE MyClass(QObject *parent = nullptr) : QObject(parent) {}
+    Q_INVOKABLE int getValue() const noexcept { return value; }
+    Q_INVOKABLE void setValue(int i) noexcept { value = i; }
+
 private:
     int value;
 };
-Q_DECLARE_METATYPE(MyClass);
 
-int main(int argc, char *argv[])
+int main()
 {
-    // WARNING!!! YOU **NEED** THIS LINE
-    // Otherwise, the class won't be registered in the Qt system...
-    qRegisterMetaType<MyClass>();
+    // This is the object that you can share everywhere, without knowing the class MyClass
+    const QMetaObject &meta = MyClass::staticMetaObject;
 
-    int id = QMetaType::type("MyClass");
-    if (id == QMetaType::UnknownType)
+    // from now on, we assume we don't know MyClass anymore and we'll just work with the QMetaObject
+    QObject *qobj = meta.newInstance();
+    if (!qobj)
         return 1;
-    // Now you can instantiate an object of MyClass by its name!
-    // note the static_cast that can be dangerous...
-    // This is because QMetaType::create() returns a void*
-    MyClass *myClassPtr = static_cast<MyClass*>(QMetaType::create(id));
-    myClassPtr->setValue(8);
-    qDebug() << "LOOOL" << myClassPtr->getValue();
-    QMetaType::destroy(id, myClassPtr);
+    // Now we can use the QObject, assuming we know it has the methods getValue() and setValue()
+    bool callok;
+    callok = QMetaObject::invokeMethod(qobj, "setValue", Qt::DirectConnection, Q_ARG(int, 8));
+    if (!callok)
+        return 1;
+    int value;
+    callok = QMetaObject::invokeMethod(qobj, "getValue", Qt::DirectConnection, Q_RETURN_ARG(int, value));
+    if (!callok)
+        return 1;
+    qDebug() << "LOOOL" << value;
+    delete qobj;
 
     return 0;
 }
+
+#include "main.moc" // we need this because we are creating a class inheritting QObject in a CPP file.
+
 ```
 
-The second point is a bit trickier... Current solution is to define an interface in the plugin that creates the entry point. Then, all the plugins that want to use it will copy the `.hpp` file in their repository to be able to implement the interface. Not the most beautiful, but so far it works (though we are stuck with pure abstract class).
+Note that you need to manipulate the object through the `QMetaObject` interface. You assume that you know what methods the object has
+and howo to call them. In case it is not possible, `QMetaObject` will tell you (return `false`).
 
 Code explanation
 ----------------
@@ -177,7 +187,7 @@ Code explanation
 
 The project is composed of 4 projects:
 
-- utils: a static library used in all other projects
+- utils: a dynamic library used in all other projects (it is a shared library because it owns the singleton that manages the plugins and the entry points)
 - main_app: the main application
 - plugin_cat: a first plugin representing a cat
 - plugin_dog: a second plugin representing a dog
@@ -185,16 +195,16 @@ The project is composed of 4 projects:
 
 It is the same as the graphic above, with `plugin_cat` for `Plugin 1`, `plugin_dog` for `Plugin 2` and `plugin_frog` for `Plugin 3`.
 
-Globally, we have one executable and 3 dynamic libraries (`.dll` or `.so`) created thanks to the [Qt Plugin system](https://doc.qt.io/qt-5/plugins-howto.html#the-low-level-api-extending-qt-applications).
+Globally, we have one executable and 4 dynamic libraries (`.dll` or `.so`), 3 created thanks to the [Qt Plugin system](https://doc.qt.io/qt-5/plugins-howto.html#the-low-level-api-extending-qt-applications) and the utils one.
 
-The `utils` project defines the interface for a plugin, this is the common point for all the others projects. Indeed, `main_app` needs to know this interface on order to be able to load the plugins that implements it.
+The `utils` project defines the interface for a plugin, this is the common point for all the others projects. Indeed, `main_app` needs to know this interface on order to be able to load the plugins that implements it. On top of that, it also has the `PluginManager` class that is a singleton, where plugins can register or use entry points.
 
 ### Features ###
 
-When you launch the application, the followin happens:
+When you launch the application, the following happens:
 
+- plugins are loaded in `main.cpp`
 - the main widget is created in `main.cpp`
-- the constructor of the main widget `MainApp` will automatically load all the available plugins
 - now you can see what the plugins have to say by selecting a plugin from the combobox.
 
 Now, what we want is to have some communication between the plugins:
@@ -204,19 +214,11 @@ Now, what we want is to have some communication between the plugins:
 
 ### How it works ###
 
-`plugin_dog` can have enemies and friends. Both need to implement the same interface: [DogInterface](./source/plugin_dog/DogInterface.hpp). However, if you want to be friend, you need to use the entrypoint `PluginDog_friend`, and use `PluginDog_enemies` to be an enemy.
+`plugin_dog` can have enemies and friends. Both need to be a class that implements the same function: `QString cry()`. However, if you want to be friend, you need to use the entrypoint `PluginDog_friend`, and use `PluginDog_enemies` to be an enemy.
 
-Let's take a frog for instance. It want to be a friend of dogs, thus, it first copies the [DogInterface (from plugin_frog)](./source/plugin_frog/DogInterface.hpp), and implements it in [DogFriend](./source/plugin_frog/DogFriend.hpp). Here, the class is exposed to Qt thanks to the line `Q_DECLARE_METATYPE(DogFriend)`. Note that it also needs to add this dummy line in [PluginFrog.cpp](./source/plugin_frog/PluginFrog.cpp#L8): `qRegisterMetaType<DogFriend>();;`.
+Let's take a frog for instance. It want to be a friend of dogs, thus, it has a class that implements the `cry()` method: [DogFriend](./source/plugin_frog/DogFriend.hpp). This class is registered on the `PluginDog_friend` entrypoint in the constructor of [PluginFrog](./source/plugin_frog/PluginFrog.cpp#L9-L10).
 
-Now, in its [JSON metadata](./source/plugin_frog/PluginFrog.json), it can use the entry point `PluginDog_friend` to expose the class:
-
-```json
-{
-	"PluginDog_friend": "DogFriend"
-}
-```
-
-Thus, when `plugin_dog` checks for its friends, it can see that he can instantiate a class named `"DogFriend"` and use it: [PluginDog.cpp#L34-L49](./source/plugin_dog/PluginDog.cpp#L34-L49)
+Thus, when `plugin_dog` checks for its friends, it can see that there is an entry point registered, and try to call the `cry` method through a `QMetaObject`: [PluginDog.cpp#L34-L45](./source/plugin_dog/PluginDog.cpp#L34-L45)
 
 Same mechanism happens for the cat.
 
