@@ -15,7 +15,6 @@ PluginCat::PluginCat(QObject *parent) : QObject(parent)
 
 const QString &PluginCat::name() const noexcept
 {
-	static QString _name = "PluginCat";
 	return _name;
 }
 

@@ -30,6 +30,9 @@ public:
 	// not exposed
 	void setInfo(QString info) noexcept;
 
+public:
+	inline static const QString _name = "PluginCat";
+
 private:
 	QString _info;
 };
